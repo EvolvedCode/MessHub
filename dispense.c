@@ -1,6 +1,6 @@
 #include <wiringPi.h>
 #include <stdio.h>
-#include <signal.h>
+#include <unistd.h>
 
 #define POW 18
 #define REL 17
@@ -14,7 +14,7 @@ int main(int argc, char *argv[]){
 		return 0;
 	}
 	else{
-		times=(int)argv[1];
+		times=atoi(argv[1]);
 	}
 	printf("Starting to dispense %d meals.\n",times);
 
