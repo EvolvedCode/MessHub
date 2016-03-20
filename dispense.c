@@ -25,7 +25,14 @@ int main(int argc, char *argv[]){
 	pinMode(OPE, INPUT);
 	pullUpDnControl(CLO, PUD_DOWN);
 	pullUpDnControl(OPE, PUD_DOWN);
-
+	
+	while(digitalRead(CLO)==0){
+		digitalWrite(REL,0);
+		digitalWrite(POW,1);
+		delay(1);
+	}
+	digitalWrite(POW,0);
+	
 	int i=0;
 	for(i=0; i<times; i++){
 		//if(digitalRead(CLO)==1){
