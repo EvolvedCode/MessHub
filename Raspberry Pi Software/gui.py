@@ -1,7 +1,16 @@
 from tkinter import *
 import tkinter.messagebox as tm
 import os
-#import pymysql
+import mysql.connector
+
+cnx = mysql.connector.connect(user='messhub', password='REDACTED',
+                              host='messhub.cloudapp.net:3306',
+                              database='messhub')
+
+cursorA=cnx.cursor()
+cursorB=cnx.cursor()
+loginq=("SELECT * FROM refugees WHERE ID=%s AND pass=%s")
+updateq=("UPDATE refugees SET mealsLeft=%s WHERE ID=%s")
 
 class LoginFrame(Frame):
     def __init__(self, master):
@@ -37,26 +46,17 @@ class LoginFrame(Frame):
         password = self.entry_2.get()
         quantity = str(self.entry_3.get())
         quantity = str("sudo ./dispense "+quantity)
-        print(quantity)
 
-        if username == "10529125":
-            tm.showinfo("Login info", "Welcome Din!\nDispensing your meals.")
-            os.system(quantity)
-        elif username == "16345957":
-            tm.showinfo("Login info", "Welcome Jin!\nDispensing your meals.")
-            os.system(quantity)
-        elif username == "44125":
-            tm.showinfo("Login info", "Welcome Ken!\nDispensing your meals.")
-            os.system(quantity)
-        elif username == "125124":
-            tm.showinfo("Login info", "Welcome Rukia!\nDispensing your meals.")
-            os.system(quantity)
-        elif username == "26462":
-            tm.showinfo("Login info", "Welcome Ichigo!\nDispensing your meals.")
-            os.system(quantity)
-        elif username == "4236432":
-            tm.showinfo("Login info", "Welcome Raz!\nDispensing your meals.")
-            os.system(quantity)
+        cursorA.execute(loginq, (username, password))
+        
+        for(ID, firstName, lastName, mealsLeft) in cursorA:
+            if mealsLeft>0 :
+                tm.showinfo("Login info", "Welcome"+str(firstName)+" "+str(lastName)+"!\nDispensing your meals.")
+                mL=mealsLeft-1
+                cursorB.execute(updateq, (mL, ID))
+                os.system(quantity)
+            else:
+                tm.showerror("No meals left for this week!")
         else:
             tm.showerror("Login error", "Incorrect username/password!")
 
